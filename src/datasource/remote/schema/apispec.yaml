@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  version: 1.0.0
+paths:
+  /posts:
+    get:
+      summary: Get all posts
+      responses:
+        '200':
+          description: A list of posts with context
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostWithContext'
+  /posts/{id}:
+    get:
+      summary: Get a post by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single post with context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostWithContext'
+        '404':
+          description: Post not found
+  /inquiries:
+    post:
+      summary: Create a new inquiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inquiry'
+      responses:
+        '201':
+          description: Inquiry created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inquiry'
+    get:
+      summary: Get all inquiries
+      responses:
+        '200':
+          description: A list of inquiries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inquiry'
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        userId:
+          type: integer
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+    PostWithContext:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            metadata:
+              type: string
+            favorite:
+              type: boolean
+            isOwner:
+              type: boolean
+    Inquiry:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        contents:
+          type: string
+        author:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - PENDING
+            - REPLIED
+            - CLOSED
